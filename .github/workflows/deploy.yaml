@@ -30,6 +30,14 @@ jobs:
           DOCKER_IMAGE_TAG="${INPUT_DOCKER_IMAGE_TAG:-$(date -u +'%Y%m%d%H%M%S')}" >> $GITHUB_ENV
           echo "Docker Image Tag: ${DOCKER_IMAGE_TAG}"
 
+      - name: Build Custom Renovate Image
+        run: docker build -t "arkadiusjonczek/ast-grep:${DOCKER_IMAGE_TAG}" .
+
+      - name: Scan for Critical CVEs
+        run: |
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+          aquasec/trivy:latest image --exit-code 1 --severity CRITICAL "arkadiusjonczek/ast-grep:${DOCKER_IMAGE_TAG}"
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v7
         with:
