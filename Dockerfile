@@ -1,17 +1,29 @@
-FROM cgr.dev/chainguard/renovate:v44.182.2 AS base
-
-USER root
+FROM cgr.dev/chainguard/wolfi-base:latest AS builder
 
 RUN apk update && \
-    apk upgrade && \
     apk add --no-cache \
-      python3 \
-      py3-pip \
-      poetry \
-      go \
-      git \
-      docker-cli
+        nodejs-24 \
+        npm
 
-USER renovate
+WORKDIR /app
 
-RUN python3 --version && go version && poetry --version && docker --version
+RUN npm install -g renovate
+
+FROM cgr.dev/chainguard/wolfi-base:latest
+
+WORKDIR /usr/src/app
+
+RUN apk update && \
+    apk add --no-cache \
+        nodejs-24 \
+        git \
+        openssh-client \
+        go-1.27 \
+        python-3.15 \
+        openjdk-27-jre \
+        docker
+
+COPY --from=builder /usr/lib/node_modules /usr/lib/node_modules
+COPY --from=builder /usr/bin/renovate /usr/bin/renovate
+
+ENTRYPOINT ["/usr/bin/renovate"]
