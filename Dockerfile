@@ -24,6 +24,6 @@ RUN apk update && \
         docker
 
 COPY --from=builder /usr/lib/node_modules /usr/lib/node_modules
-COPY --from=builder /usr/bin/renovate /usr/bin/renovate
+COPY --from=builder /usr/local/bin/renovate /usr/local/bin/renovate
 
 ENTRYPOINT ["/usr/bin/renovate"]
