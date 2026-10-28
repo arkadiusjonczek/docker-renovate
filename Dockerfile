@@ -2,7 +2,7 @@ FROM cgr.dev/chainguard/wolfi-base:latest AS builder
 
 RUN apk update && \
     apk add --no-cache \
-        nodejs-24 \
+        nodejs-26 \
         npm
 
 WORKDIR /app
@@ -15,7 +15,7 @@ WORKDIR /usr/src/app
 
 RUN apk update && \
     apk add --no-cache \
-        nodejs-24 \
+        nodejs-26 \
         git \
         openssh-client \
         go-1.27 \
